@@ -1,0 +1,7 @@
+if (typeof(flash) != 'undefined')
+  if (typeof(flash.error) != 'undefined')
+    for mesg in flash.error
+      div.errorFlash= mesg
+  if (typeof(flash.success) != 'undefined')
+    for mesg in flash.success
+      div.successFlash= mesg

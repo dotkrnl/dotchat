@@ -1,0 +1,25 @@
+extends base
+
+append head
+  meta(name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no")
+  link(rel='stylesheet', href='/stylesheets/global.css')
+
+block title
+  if (typeof(title) != 'undefined')
+    title #{title} | #{website}
+  else
+    title #{website}
+
+block body
+  div#header
+    block header
+      include header
+    block flash
+      include flash
+
+  div#content
+    block content
+
+  div#footer
+    block footer
+      include footer

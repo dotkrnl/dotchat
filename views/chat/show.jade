@@ -1,0 +1,25 @@
+extends ../includes/layout
+
+append head
+  link(rel='stylesheet', href='/stylesheets/chat.css')
+
+block header
+  div#fetch_messages
+    | Show old messages
+
+block content
+  ul#messages
+
+block footer
+  ul#chat_form
+    li.message.mine.cf
+      div.avatar#chat_user
+        img#chat_avatar
+      div.container
+        textarea.content#chat_content
+
+append scripts
+  script(src='/socket.io/socket.io.js').
+  script(src='/javascripts/chat.js').
+  script.
+    r(function(){dotchat.setup("#{group.name}", "#{group.secret}");});

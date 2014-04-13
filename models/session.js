@@ -4,6 +4,6 @@
  */
 
 // module dependencies
-var MemoryStore = require('express').session.MemoryStore;
+var MemoryStore = require('express-session').MemoryStore;
 
 exports.store = new MemoryStore();

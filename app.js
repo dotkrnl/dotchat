@@ -5,13 +5,11 @@
 
 // module dependencies
 var express = require('express');
-var flash = require('connect-flash');
 var http = require('http');
 var path = require('path');
 var Q = require('q');
 
 var controllers = require('./controllers');
-var database = require('./models/database');
 var socket = require('./socket');
 var settings = require('./settings');
 var helpers = require('./utils/helpers');
@@ -23,33 +21,29 @@ app.set('host', settings.host || '127.0.0.1');
 app.set('port', settings.port || process.env.PORT || '3000');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(express.cookieParser(settings.cookieSecret));
-app.use(database);
-app.use(express.session(settings.session));
-app.use(flash());
+if ('development' === (process.env.NODE_ENV || 'development')) {
+  app.use(require('morgan')());
+}
+app.use(require('body-parser')());
+app.use(require('method-override')());
+app.use(require('cookie-parser')(settings.cookieSecret));
+app.use(require('./models/database'));  // TODO: function style
+app.use(require('cookie-session')(settings.session));
+app.use(require('connect-flash')());
 for (var key in helpers) {
   if (helpers.hasOwnProperty(key)) {
     app.use(helpers[key]);
   }
 }
-app.use(app.router);
-app.use(require('less-middleware')({
-  src: path.join(__dirname, 'public'),
-  compress: true
-}));
-app.use(express.static(path.join(__dirname, 'public')));
-
-// development only
-if ('development' === app.get('env')) {
-  app.use(express.errorHandler());
-}
-
-// initialize application controllers
 controllers.attach(app);
+app.use(require('less-middleware')(path.join(__dirname, 'public'),
+  null, null, {
+    compress: true
+  }));
+app.use(require('serve-static')(path.join(__dirname, 'public')));
+if ('development' === (process.env.NODE_ENV || 'development')) {
+  app.use(require('errorhandler')());
+}
 
 // attach socket.io to server
 var server = http.createServer(app);

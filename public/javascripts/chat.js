@@ -204,14 +204,14 @@ dotchat = {
       var bottom = top + ("innerHeight" in window ? // fix for IE
         window.innerHeight : document.documentElement.offsetHeight);
       var height = document.height || document.body.scrollHeight;
-      if (top < 100) {
+      if (height - bottom < 100) {
+        dotchat.scroll = 'end';
+      } else if (top < 100) {
         // TODO: pull to refresh instead
         //if (!dotchat.allFetched && dotchat.scroll !== 'front') {
         //  dotchat.actions.fetchMessages();
         //} // old messages exist and status changed
         dotchat.scroll = 'front';
-      } else if (height - bottom < 100) {
-        dotchat.scroll = 'end';
       } else {
         dotchat.scroll = 'middle';
       }
@@ -306,8 +306,10 @@ dotchat = {
       var oldBottom = null;
       if (dotchat.scroll !== 'end') { // keep end
         var firstItem = $$('messages').firstChild;
-        firstItem.id = 'oldTop'; // Tag it because old DOM will be destroyed
-        oldBottom = firstItem.getBoundingClientRect().bottom;
+        if (firstItem) {
+          firstItem.id = 'oldTop'; // Tag it because old DOM will be destroyed
+          oldBottom = firstItem.getBoundingClientRect().bottom;
+        }
       }
       action();
       if (oldBottom) { // fix scroll location after added

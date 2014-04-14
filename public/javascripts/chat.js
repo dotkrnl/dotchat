@@ -103,6 +103,9 @@ dotchat = {
      * Send message to socket.io server with content of #chat_content
      */
     sendMessage: function () {
+      if ($$('chat_content').value === '') {
+        return; // avoid empty messages
+      }
       dotchat.socket.emit('message', {
         group: dotchat.group,
         secret: dotchat.secret,

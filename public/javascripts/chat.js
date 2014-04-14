@@ -38,9 +38,7 @@ dotchat = {
     dotchat.secret = secret;
     if (docCookies.getItem('author')) {
       dotchat.author = docCookies.getItem('author');
-    } else {
-      // TODO: author required
-      $$('chat_content').disabled = true;
+      dotchat.handlers.toggleSubmitForm();
     }
     dotchat.connect();
     dotchat.bind();
@@ -69,6 +67,10 @@ dotchat = {
     var enter_key = 13; // disable enter and used as send
     $$('chat_content').onkeydown =
       dotchat.utils.whenKeyIs(enter_key, dotchat.actions.sendMessage);
+    $$('chat_information').onkeydown =
+      dotchat.utils.whenKeyIs(enter_key, dotchat.handlers.changeAuthorName);
+    $$('chat_user').onclick =
+      dotchat.handlers.toggleSubmitForm;
     $$('fetch_messages').onclick =
       dotchat.actions.fetchMessages;
   },
@@ -183,7 +185,7 @@ dotchat = {
       }
       if (messages.lastID === dotchat.lastID) {
         dotchat.allFetched = true;
-        $$('fetch_messages').className += 'hidden';
+        dotchat.utils.addClass($$('fetch_messages'), 'hidden');
         return; // all messages fetched
       }
       dotchat.lastID = messages.lastID;
@@ -215,6 +217,31 @@ dotchat = {
       } else {
         dotchat.scroll = 'middle';
       }
+    },
+
+    /**
+     * Handle function used when submit form type should be changed
+     */
+    toggleSubmitForm: function () {
+      if (dotchat.author) {
+        dotchat.utils.toggleClass($$('chat_information'), 'hidden');
+        dotchat.utils.toggleClass($$('chat_content'), 'hidden');
+      } else {
+        // force submit form to information form
+        dotchat.utils.delClass($$('chat_information'), 'hidden');
+        dotchat.utils.addClass($$('chat_content'), 'hidden');
+      }
+    },
+
+    /**
+     * Handler for change author name as user requested
+     */
+    changeAuthorName: function () {
+      dotchat.author = $$('chat_information').value;
+      docCookies.setItem('author', dotchat.author, null, '/');
+      dotchat.actions.requestAvatar();
+      dotchat.handlers.toggleSubmitForm();
+      dotchat.utils.tagMessages();
     }
   },
 
@@ -274,6 +301,28 @@ dotchat = {
     addClass: function(dom, key) {
       if (dom.className.indexOf(key) === -1) {
         dom.className += ' ' + key;
+      }
+    },
+
+    /**
+     * Remove class from a DOM
+     * @param dom One DOM
+     * @param {string} key Class name to remove
+     */
+    delClass: function(dom, key) {
+      dom.className = dom.className.replace(key, '');
+    },
+
+    /**
+     * Toggle class in a DOM
+     * @param dom One DOM
+     * @param {string} key Class name to toggle
+     */
+    toggleClass: function(dom, key) {
+      if (dom.className.indexOf(key) === -1) {
+        dotchat.utils.addClass(dom, key);
+      } else {
+        dotchat.utils.delClass(dom, key);
       }
     },
 

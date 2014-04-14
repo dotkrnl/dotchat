@@ -16,7 +16,8 @@ block footer
       div.avatar#chat_user
         img#chat_avatar
       div.container
-        textarea.content#chat_content
+        textarea.content.hidden#chat_content
+        input.content#chat_information(placeholder='Your Name Here')
 
 append scripts
   script(src='/socket.io/socket.io.js').

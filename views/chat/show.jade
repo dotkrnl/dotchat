@@ -8,16 +8,18 @@ block header
     | Show old messages
 
 block content
-  ul#messages
+  div.body-container
+    ul#messages
 
 block footer
-  ul#chat_form
-    li.message.mine.cf
-      div.avatar#chat_user
-        img#chat_avatar
-      div.container
-        textarea.content.hidden#chat_content
-        input.content#chat_information(placeholder='Your Name Here')
+  div.body-container
+    ul#chat_form
+      li.message.mine.cf
+        div.avatar#chat_user
+          img#chat_avatar
+        div.container
+          textarea.content.hidden#chat_content
+          input.content#chat_information(placeholder='Your Name Here')
 
 append scripts
   script(src='/socket.io/socket.io.js').

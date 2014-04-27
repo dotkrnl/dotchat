@@ -76,7 +76,8 @@ exports.instance = {
    * @returns {Q.promise} Q promise with messages list resolve
    */
   getMessagesWithLastID: function(lastID, perQuery) {
-    var query = this.getMessages();
+    var database = require('../database');
+    var query = database.db.models.messages.findByGroup({id: this.id});
     if (lastID) { // if fetched
       query = query.find({id: orm.lt(lastID)});
     } // else if is first query, select last messages
